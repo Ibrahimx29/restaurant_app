@@ -4,9 +4,11 @@ import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurants.dart';
 import 'package:restaurant_app/provider/restaurant_detail_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/provider/restaurant_search_provider.dart';
 import 'package:restaurant_app/ui/restaurant_detail_page.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
 import 'package:restaurant_app/ui/restaurant_review_page.dart';
+import 'package:restaurant_app/ui/restaurant_search_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +54,11 @@ class MyApp extends StatelessWidget {
             ),
             child: RestaurantReviewPage(restaurant: restaurant),
           );
-        }
+        },
+        RestaurantSearchPage.routeName: (context) => ChangeNotifierProvider(
+              create: (context) => SearchProvider(apiService: ApiService()),
+              child: const RestaurantSearchPage(),
+            ),
       },
     );
   }

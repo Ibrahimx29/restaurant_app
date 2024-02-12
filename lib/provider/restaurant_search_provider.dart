@@ -6,38 +6,39 @@ import 'package:restaurant_app/data/model/restaurants.dart';
 
 enum ResultState { loading, noData, hasData, error }
 
-class RestaurantDetailProvider extends ChangeNotifier {
+class SearchProvider extends ChangeNotifier {
   final ApiService apiService;
 
-  RestaurantDetailProvider(
-      {required this.apiService, required String restaurantId}) {
-    _fetchRestaurantDetail(restaurantId);
-  }
+  SearchProvider({required this.apiService});
 
-  late RestaurantDetail _restaurantDetail;
-  late ResultState _state;
-  String _message = '';
+  late RestaurantsSearch _restaurantsSearch;
+  ResultState _state = ResultState.noData;
+  String _message = 'No restaurant';
 
   String get message => _message;
 
-  RestaurantDetail get result => _restaurantDetail;
+  RestaurantsSearch get result => _restaurantsSearch;
 
   ResultState get state => _state;
 
-  Future<dynamic> _fetchRestaurantDetail(String restaurantId) async {
+  Future<dynamic> fetchRestaurants(String query) async {
     try {
-      _state = ResultState.loading;
-      notifyListeners();
-      final restaurantDetail =
-          await apiService.getRestaurantDetail(restaurantId);
-      if (restaurantDetail.id.isEmpty) {
+      if (query.isEmpty) {
         _state = ResultState.noData;
         notifyListeners();
-        return _message = 'Empty Data';
+        return _message = 'Empty Query';
+      }
+      _state = ResultState.loading;
+      notifyListeners();
+      final result = await apiService.searchRestaurants(query);
+      if (result.restaurants.isEmpty) {
+        _state = ResultState.noData;
+        notifyListeners();
+        return _message = 'No Data Found';
       } else {
         _state = ResultState.hasData;
         notifyListeners();
-        return _restaurantDetail = restaurantDetail;
+        return _restaurantsSearch = result;
       }
     } on SocketException catch (_) {
       _state = ResultState.error;
@@ -46,7 +47,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
-      return _message = 'Error --> $e';
+      return _message = 'Error: $e';
     }
   }
 }

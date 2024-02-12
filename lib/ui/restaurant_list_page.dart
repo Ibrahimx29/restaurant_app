@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/ui/restaurant_search_page.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 
 class RestaurantsListPage extends StatelessWidget {
@@ -17,6 +18,14 @@ class RestaurantsListPage extends StatelessWidget {
           "Restaurants App",
           style: GoogleFonts.lobster(),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, RestaurantSearchPage.routeName);
+            },
+            icon: const Icon(Icons.search),
+          )
+        ],
       ),
       body: Consumer<RestaurantsProvider>(
         builder: (context, state, _) {
